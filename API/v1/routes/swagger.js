@@ -31,8 +31,9 @@ const options = {
 const swaggerSpec = swaggerJSDoc(options);
 
 // This route returns a json that the index.html of Swagger readsr
-app.get("/json", (req, res, next)=> {
+router.get("/json", (req, res, next)=> {
     res.setHeader("Content-Type", "application/json");
+    res.status(200);
     res.send(swaggerSpec);
 });
 

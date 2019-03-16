@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "set-up": "npm start",
-    "test": "mocha API/tests/*.js --exit",
+    "test-user": "mocha API/tests/userTest.js --exit",
+    "test-swagger": "mocha API/tests/swaggerTest.js --exit",
     "dev": "nodemon server.js"
   },
   "repository": {
