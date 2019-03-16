@@ -16,7 +16,6 @@
         "indent": ["error", 4],
         "indent_style" : "space",
         "charset" : "utf-8",
-        "no-trailing-spaces": [2, { "skipBlankLines": true }],
-        "eol-last" : ["error", "always"]
+        "no-trailing-spaces": [2, { "skipBlankLines": true }]
     }
 }
