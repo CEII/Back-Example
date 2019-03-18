@@ -1,4 +1,6 @@
 const userModel = require("../../models/user");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 /**
  * @swagger
@@ -26,39 +28,136 @@ const userModel = require("../../models/user");
  */
 
 exports.insertUser= (req, res, next) => {
-    let resManager = res;
-    let data = req.body;
-    const userBody = {
-        name: data.name,
-        lastname: data.lastname,
-        secret: data.secret,
-        accountStatus: data.accountStatus,
-        nickname: data.nickname,
-        profileImage: {
-            completeURL: "uploads\\"+req.file.filename,
-            alternativeText:  req.body.nickname+" profile image",
-            type:  req.file.mimetype,
-            name:  req.file.filename
-        },
-        emailAddress: data.emailAddress,
-        accessCode: data.accessCode,
-        accountIdentifier: data.accountIdentifier,
-        carnet: data.carnet
-    };
-    const newUser = new userModel(userBody);
-    newUser.save()
-        .then( (result) =>{
-            resManager.status(201).json({
-                userData: newUser,
-                message: "User record created"
-            })
-        }).catch(err =>{
-        /*res.status(422).json({
-            message: "Record had a conflict",
-        });*/
-            resManager.status(500).json({
-                message: err.message
-            });
+    //Verify if a user exists with the same email and name
+    userModel.find({$or: [
+        {emailAddress: req.body.emailAddress},
+        {carnet:  req.body.carnet}
+    ]})
+        .exec()
+        .then(user =>{
+            //User found with the same carnet or email
+            if(user.length>= 1){
+                res.status(422).json({
+                    message: "Credentials in use",
+                });
+            }
+            else{
+                bcrypt.hash(req.body.secret, parseInt(process.env.SALT_ROUNDS), (err,hash)=>{
+                    if(err){
+                        console.log(err.message);
+                        res.status(500).json({
+                            message: err.message
+                        });
+                    }
+                    else{
+                        const userBody = {
+                            name: req.body.name,
+                            lastname: req.body.lastname,
+                            secret: hash,
+                            accountStatus: req.body.accountStatus,
+                            nickname: req.body.nickname,
+                            emailAddress: req.body.emailAddress,
+                            resources: req.body.resources,
+                            carnet: req.body.carnet
+                        };
+                        const newUser = new userModel(userBody);
+                        newUser.save()
+                            .then((result) =>{
+                                res.status(201).json({
+                                    userData: newUser,
+                                    message: "User record created"
+                                })
+                            }).catch(err =>{
+                                /*res.status(422).json({
+                                    message: "Record had a conflict",
+                                });*/
+                                res.status(500).json({
+                                    message: err.message
+                                });
+                            });
+                    }
+                });
+            }
         });
-    return resManager;
+
+};
+
+
+/**
+ * @swagger
+ * paths:
+ *  /users/login:
+ *      post:
+ *          tags:
+ *          - users
+ *          summary: Return a token with the user information
+ *          produces:
+ *          - "application/json"
+ *          parameters:
+ *            - name: Credencials
+ *              in: body
+ *              description: information for the login to work
+ *              required: true
+ *              schema:
+ *                  type: object
+ *                  properties:
+ *                      emailAddress:
+ *                          type: string
+ *                          example: 00062816@uca.edu.sv
+ *                      secret:
+ *                          type: string
+ *                          example: 'secretBig'
+ *          responses:
+ *              '200':
+ *                  description: Here is your token
+ *                  schema:
+ *                     type: object
+ *                     properties:
+ *                          token:
+ *                              type: string
+ *              '401':
+ *                  description: Failed login
+ */
+
+exports.requestToken = (req,res,next)=>{
+    userModel.findOne({emailAddress: req.body.emailAddress}).exec().then(doc =>{
+        if(!doc){
+            res.status(401).json({
+                message: "Authentication failed",
+            });
+        }
+        else{
+            bcrypt.compare(req.body.secret, doc.secret, (err, result)=>{
+                if(err){
+                    res.status(500).json({
+                        message: err.message
+                    });
+                }
+                else{
+                    if(result){
+                        const token = jwt.sign({
+                            idUser: doc._id,
+                            emailAddress: doc.emailAddress,
+                            resources: doc.resources
+                        }, process.env.JSON_WEB_TOKEN_SECRET,{
+                            expiresIn: "3h"
+                        });
+                        res.status(200).json({
+                            token : token,
+                            message: "Here is your token"
+                        });
+                    }
+                    else{
+                        res.status(401).json({
+                            message: "Authentication failed",
+                        });
+                    }
+                }
+            });
+        }
+    }).catch(err =>{
+        res.status(500).json({
+            message: err.message
+        });
+    });
 };

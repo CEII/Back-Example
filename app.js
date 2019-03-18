@@ -4,7 +4,7 @@ const bodyParser = require("body-parser");
 const morgan = require("morgan");
 const path = require("path");
 const mongoose = require("mongoose");
-
+const userModel = require("./API/v1/models/user");
 
 app.use(morgan("dev"));
 
@@ -16,18 +16,24 @@ const swaggerRoutes = require("./API/v1/routes/swagger");
 app.use(express.static(path.join(__dirname, "public")));
 
 
-//tell mongoose to use es6 implementation of promises
-mongoose.Promise = global.Promise;
+
 //Connection to database
 mongoose.connect(
     process.env.MONGOOSE_CONN,
     {useNewUrlParser: true })
     .then(answer=>{
         console.log("Successfully connected to database");
+        
     })
     .catch(err=>{
         console.log("Not connected to database " + err);
     });
+
+userModel.deleteMany({}).exec().then(result => {
+    console.log("Users deleted");
+}).catch(err => {
+    console.log("Problem when trying to delete all");
+});
 
 //Accepts url bodies that are simple
 app.use(bodyParser.urlencoded({extended: false}));
@@ -52,8 +58,13 @@ app.use((req,res,next)=>{
 });
 
 
+
+
 // Active endpoints for the API
 app.use("/API/v1/users", userRoutes);
 app.use("/API/v1/swagger", swaggerRoutes);
+
+
+
 
 module.exports = app;
