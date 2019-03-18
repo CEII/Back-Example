@@ -4,53 +4,58 @@ exports.users = [
         lastname: "big",
         secret: "hashed1",
         //Active
-        accountStatus: "1" ,
+        accountStatus: 1 ,
         nickname: "AlexBig",
-        profileImage: {
-            completeURL: "https://url/image123.net",
-            alternativeText: "imagetext",
-            type: "png",
-            name: "image123"
-        },
-        contactEmail: "0002316@uca.edu.sv",
-        accessCode: "1as<SD!23",
-        accountIdentifier: "AledSx",
-        carnet: "0002316"
+        emailAddress: "0002316@uca.edu.sv",
+        resources: [
+            {
+                name: "users",
+                permissions: [ "create", "read", "update", "delete"]
+            }
+        ]
     },
     {
         name: "alex1",
         lastname: "big2",
         secret: "hashed1",
         //Active
-        accountStatus: "1" ,
+        accountStatus: 1 ,
         nickname: "AlexBig",
+        emailAddress: "0002316@uca.edu.sv",
+        carnet: "0002317",
         profileImage: {
             completeURL: "https://url/image123.net",
             alternativeText: "imagetext",
             type: "png",
             name: "image123"
         },
-        contactEmail: "0002316@uca.edu.sv",
-        accessCode: "1as<SD!23",
-        accountIdentifier: "AledSxzxc",
-        carnet: "0002317"
+        resources: [
+            {
+                name: "users",
+                permissions: [ "create", "read", "update", "delete"]
+            }
+        ]
     },
     {
         name: "alex3",
         lastname: "big4",
         secret: "hashed1",
         //Active
-        accountStatus: "0" ,
+        accountStatus: 0 ,
         nickname: "AlexBig",
+        emailAddress: "0002316@uca.edu.sv",
+        carnet: "0002317",
         profileImage: {
             completeURL: "https://url/image123.net",
             alternativeText: "imagetext",
             type: "jpg",
             name: "image123"
         },
-        contactEmail: "0002316@uca.edu.sv",
-        accessCode: "1as<SD!23",
-        accountIdentifier: "AledSxasd",
-        carnet: "0002317"
+        resources: [
+            {
+                name: "users",
+                permissions: [ "create", "read", "update", "delete"]
+            }
+        ]
     },
 ];

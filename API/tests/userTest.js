@@ -1,38 +1,61 @@
 // Import the dependencies for testing
+let server;
+const userDummy  = require("../../API/v1/dummy/users");
 const chai = require("chai");
 const chaiHttp = require("chai-http");
-const server = require("../../server");
-const userDummy  = require("../../API/v1/dummy/users");
+
 //Set up request
 const req = userDummy.users[0];
 let createdId = {};
+
 // Configure chai
 chai.use(chaiHttp);
 chai.should();
+
+before( (done) =>{
+    server = require("../../server");
+    done();
+});
+
 describe("Users UT", () => {
     describe("POST /", ()=>{
+        //Wait for the callback of server to finish
         it("should make a new user", (done) =>{
+            //req.profileImage = fs.readFileSync("./API/tests/usertest.jpg");
             chai.request(server)
                 .post("/API/v1/users/")
                 //.header("Access-Token", token)
                 //.header("API-Key", apiKey)
                 //To send an attachment and a body is necessary to do this
-                .field("name", req.name)
-                .field("lastname", req.lastname)
-                .field("secret", req.secret)
-                .field("accountStatus", req.accountStatus)
-                .field("nickname", req.nickname)
-                .field("contactEmail", req.contactEmail)
-                .field("accessCode", req.accessCode)
-                .field("accountIdentifier", req.accountIdentifier)
-                .field("carnet", req.carnet)
-                // Field Path Name
-                .attach("profileImage", "./API/tests/usertest.jpg", "usertest.jpg")
+                .send(req)
                 .end((err, res) => {
                     res.should.have.status(201);
                     res.body.should.be.a("object");
                     //The response is encapsulated with another body
                     createdId._id = res.body.userData._id;
+                    done();
+                });
+        });
+        it("should fail to create with a used email or carnet", (done) =>{
+            chai.request(server)
+                .post("/API/v1/users/")
+                .send(req)
+                .end((err, res) => {
+                    res.should.have.status(422);
+                    res.body.should.be.a("object");
+                    done();
+                });
+        });
+    });
+    describe("POST /", ()=>{
+        it("should return a token", (done) =>{
+            chai.request(server)
+                .post("/API/v1/users/login")
+                .send(req)
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.be.a("object");
+                    res.body.should.have.property("token");
                     done();
                 });
         });

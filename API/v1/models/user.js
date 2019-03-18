@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const imageModel = require("./image");
+const resourceModel = require("./resource")
 const shortid = require("shortid");
 /**
  * @swagger
@@ -10,25 +11,25 @@ const shortid = require("shortid");
  *         type: string
  *      lastname:
  *         type: string
+ *      carnet:
+ *          type: string
+ *      emailAddress:
+ *          type: string
  *      secret:
  *         type: string
  *      registarAt:
  *         type: string
  *      accountStatus:
- *          type: string
+ *          type: integer
  *      nickname:
  *          type: string
  *      profileImage:
  *          type: object
  *          $ref: "#/definitions/image"
- *      contactEmail:
- *          type: string
- *      accessCode:
- *          type: string
- *      accountIdentifier:
- *          type: string
- *      carnet:
- *          type: string
+ *      resources:
+ *          type: array
+ *          items:
+ *              $ref: "#/definitions/resource"
  */
 
 const userSchema = mongoose.Schema({
@@ -38,15 +39,14 @@ const userSchema = mongoose.Schema({
     },
     name: {type: String, require:true},
     lastname: {type: String, require:false},
+    carnet: {type:String, require:true},
+    emailAddress: {type:String, require:true},
     secret: {type: String, require:true},
     registarAt: {type: Date, default: Date.now},
     accountStatus: { type: Number, require:true},
     nickname: {type: String, require:true},
     profileImage: imageModel,
-    emailAddress: {type:String, require:true},
-    accessCode: {type:String, require:true},
-    accountIdentifier: {type:String, require:true},
-    carnet: {type:String, require:true}
+    resources: [resourceModel]
 });
 
 module.exports = mongoose.model("user", userSchema);

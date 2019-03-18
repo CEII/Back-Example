@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const actionsGET = require("../controllers/user/get");
 const actionPOST = require("../controllers/user/post");
-const uploadImage = require("../middleware/uploadImage");
+// const uploadImage = require("../middleware/uploadImage"); uploadImage.upload.single("profileImage");
 
 //General description of the whole route
 /**
@@ -17,7 +17,8 @@ const uploadImage = require("../middleware/uploadImage");
 router.get("/", actionsGET.allUsers);
 router.get("/:idUser", actionsGET.oneUser);
 //POST routes
-router.post("/", uploadImage.upload.single("profileImage"), actionPOST.insertUser);
+router.post("/", actionPOST.insertUser);
+router.post("/login", actionPOST.requestToken);
 
 
 module.exports = router;
