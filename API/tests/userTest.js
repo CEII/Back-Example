@@ -30,7 +30,7 @@ describe("Users UT", () => {
                 .send(req)
                 .end((err, res) => {
                     res.should.have.status(201);
-                    res.body.should.be.a("object");
+                    res.body.should.be.a("string");
                     //The response is encapsulated with another body
                     createdId._id = res.body.userData._id;
                     done();
