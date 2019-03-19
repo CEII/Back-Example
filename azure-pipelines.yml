@@ -17,12 +17,13 @@ steps:
   displayName: 'Install Node.js'
 
 - script: |
+    export API_PORT=$(API_PORT)
+    export MONGOOSE_CONN=$(MONGOOSE_CONN)
+    export JSON_WEB_TOKEN_SECRET=$(JSON_WEB_TOKEN_SECRET)
+    export SALT_ROUNDS=$(SALT_ROUNDS)
+  displayName: 'Setting environment variables'
+
+- script: |
     npm install
     npm run test-user 
   displayName: 'npm install and build'
-
-variables:
-  API_PORT: '$(API_PORT)'
-  MONGOOSE_CONN: '$(MONGOOSE_CONN)'
-  JSON_WEB_TOKEN_SECRET: '$(JSON_WEB_TOKEN_SECRET)'
-  SALT_ROUNDS: '$(SALT_ROUNDS)'
