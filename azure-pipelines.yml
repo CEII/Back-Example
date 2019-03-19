@@ -20,3 +20,9 @@ steps:
     npm install
     npm run test-user 
   displayName: 'npm install and build'
+
+variables:
+  API_PORT: '$(API_PORT)'
+  MONGOOSE_CONN: '$(MONGOOSE_CONN)'
+  JSON_WEB_TOKEN_SECRET: '$(JSON_WEB_TOKEN_SECRET)'
+  SALT_ROUNDS: '$(SALT_ROUNDS)'
