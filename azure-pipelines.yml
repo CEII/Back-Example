@@ -17,10 +17,14 @@ steps:
   displayName: 'Install Node.js'
 
 - script: |
-    export API_PORT=$(API_PORT)
-    export MONGOOSE_CONN=$(MONGOOSE_CONN)
-    export JSON_WEB_TOKEN_SECRET=$(JSON_WEB_TOKEN_SECRET)
-    export SALT_ROUNDS=$(SALT_ROUNDS)
+    # export API_PORT=$(API_PORT)
+    # export MONGOOSE_CONN=$(MONGOOSE_CONN)
+    # export JSON_WEB_TOKEN_SECRET=$(JSON_WEB_TOKEN_SECRET)
+    # export SALT_ROUNDS=$(SALT_ROUNDS)
+    echo $(API_PORT)
+    echo $(MONGOOSE_CONN)
+    echo $(JSON_WEB_TOKEN_SECRET)
+    echo $(SALT_ROUNDS)
   displayName: 'Setting environment variables'
 
 - script: |
